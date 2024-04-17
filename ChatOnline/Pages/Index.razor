@@ -1,0 +1,80 @@
+﻿@page "/"
+@inject NavigationManager NavManager
+
+<PageTitle>chat.online</PageTitle>
+
+<div class="container mt-5">
+    <!-- Форма для авторизации -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Authorization</h5>
+            <div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input @bind="_authUser.Username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Username">
+                    <small id="emailHelp" class="form-text text-muted">Username must be 0-9, A-z.</small>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input @bind="_authUser.Password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <button @onclick="Authorize" class="btn btn-primary">Authorize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма для регистрации -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Registration</h5>
+            <div>
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input @bind="_regUser.Username" type="text" class="form-control" id="regUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input @bind="_regUser.Password" type="password" class="form-control" id="regPassword" placeholder="Password">
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <button @onclick="Register" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private User _authUser = new User("", "");
+    private User _regUser = new User("", "");
+
+    private void Authorize()
+    {
+        // Реализация логики авторизации
+        // Например, проверка введенных данных и переход на страницу чата
+        NavManager.NavigateTo("/chat");
+    }
+
+    private void Register()
+    {
+        // Реализация логики регистрации
+        // Например, сохранение данных нового пользователя и переход на страницу чата
+        NavManager.NavigateTo("/chat");
+    }
+
+    class User
+    {
+        public User(string username, string password)
+        {
+            Id = Guid.NewGuid().ToString();
+            Username = username;
+            Password = password;
+        }
+
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}
