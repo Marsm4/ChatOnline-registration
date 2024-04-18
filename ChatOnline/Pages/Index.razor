@@ -11,12 +11,12 @@
             <div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Email address</label>
-                    <input @bind="_authUser.Username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Username">
+                    <input @bind="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Username">
                     <small id="emailHelp" class="form-text text-muted">Username must be 0-9, A-z.</small>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Password</label>
-                    <input @bind="_authUser.Password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    <input @bind="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                 </div>
             </div>
             <div class="d-flex flex-column">
@@ -50,11 +50,64 @@
     private User _authUser = new User("", "");
     private User _regUser = new User("", "");
 
+    private string email;
+    private string password;
+    private string message = "";
+    private string messageType = "";
+
     private void Authorize()
     {
-        // Реализация логики авторизации
-        // Например, проверка введенных данных и переход на страницу чата
-        NavManager.NavigateTo("/chat");
+        if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+        {
+            // Проверка существующего пользователя с введенными данными
+            bool isUserValid = CheckUserValidity(email, password);
+
+            if (isUserValid)
+            {
+                // Если пользователь существует и введенные данные верны,
+                // вы можете выполнить переход на страницу чата
+                NavManager.NavigateTo("/chat");
+            }
+            else
+            {
+                // Вывод сообщения об ошибке о неверных учетных данных
+                message = "Неверный email или пароль.";
+                messageType = "danger";
+            }
+        }
+        else
+        {
+            // Вывод сообщения об ошибке о не заполненных полях
+            message = "Пожалуйста, заполните все поля.";
+            messageType = "warning";
+        }
+    }
+
+    private bool CheckUserValidity(string email, string password)
+    {
+        // Здесь должна быть ваша логика проверки пользователя.
+        // Например, вы можете иметь коллекцию существующих пользователей
+        // и проверять, есть ли в этой коллекции пользователь с таким email и password.
+
+        // Пример проверки для демонстрации:
+        // Предположим, у вас есть список пользователей:
+        var userList = new List<User>
+        {
+            new User("user1@example.com", "password1"),
+            new User("user2@example.com", "password2"),
+            // Здесь добавьте других пользователей
+        };
+
+        // Проверяем, есть ли пользователь с введенными данными в списке
+        foreach (var user in userList)
+        {
+            if (user.Username == email && user.Password == password)
+            {
+                return true; // Пользователь найден
+            }
+        }
+
+        return false; // Пользователь не найден
     }
 
     private void Register()
@@ -62,7 +115,7 @@
         // Реализация логики регистрации
         // Например, сохранение данных нового пользователя и переход на страницу чата
         //comit
-        NavManager.NavigateTo("/chat");
+        NavManager.NavigateTo("/chat?message=Welcome%20to%20the%20chat!");
     }
 
     class User
