@@ -47,6 +47,13 @@
 </div>
 
 @code {
+    private List<User> userList = new List<User>
+    {
+        new User("user1@example.com", "password1"),
+        new User("user2@example.com", "password2"),
+        // Здесь добавьте других пользователей
+    };
+
     private User _authUser = new User("", "");
     private User _regUser = new User("", "");
 
@@ -65,7 +72,8 @@
             if (isUserValid)
             {
                 // Если пользователь существует и введенные данные верны,
-                // вы можете выполнить переход на страницу чата
+                // или пользователь успешно зарегистрировался,
+                // переходим на страницу чата
                 NavManager.NavigateTo("/chat");
             }
             else
@@ -85,24 +93,12 @@
 
     private bool CheckUserValidity(string email, string password)
     {
-        // Здесь должна быть ваша логика проверки пользователя.
-        // Например, вы можете иметь коллекцию существующих пользователей
-        // и проверять, есть ли в этой коллекции пользователь с таким email и password.
-
-        // Пример проверки для демонстрации:
-        // Предположим, у вас есть список пользователей:
-        var userList = new List<User>
-        {
-            new User("user1@example.com", "password1"),
-            new User("user2@example.com", "password2"),
-            // Здесь добавьте других пользователей
-        };
-
         // Проверяем, есть ли пользователь с введенными данными в списке
         foreach (var user in userList)
         {
             if (user.Username == email && user.Password == password)
             {
+                _authUser = user; // Сохраняем информацию об авторизованном пользователе
                 return true; // Пользователь найден
             }
         }
@@ -112,10 +108,9 @@
 
     private void Register()
     {
-        // Реализация логики регистрации
-        // Например, сохранение данных нового пользователя и переход на страницу чата
-        //comit
-        NavManager.NavigateTo("/chat?message=Welcome%20to%20the%20chat!");
+        // Добавляем зарегистрированного пользователя в список пользователей
+        userList.Add(_regUser);
+        // NavManager.NavigateTo("/chat?message=Welcome%20to%20the%20chat!");
     }
 
     class User
