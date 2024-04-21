@@ -41,6 +41,12 @@
             </div>
             <div class="d-flex flex-column">
                 <button @onclick="Register" class="btn btn-primary">Register</button>
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="alert alert-@messageType" role="alert">
+                        @message
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -110,6 +116,9 @@
     {
         // Добавляем зарегистрированного пользователя в список пользователей
         userList.Add(_regUser);
+        // Выводим сообщение об успешной регистрации
+        message = "Регистрация успешна!";
+        messageType = "success";
         // NavManager.NavigateTo("/chat?message=Welcome%20to%20the%20chat!");
     }
 
