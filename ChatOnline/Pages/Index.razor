@@ -114,12 +114,27 @@
 
     private void Register()
     {
+        if (_regUser.Username.Length < 6 || !char.IsLetter(_regUser.Username[0]))
+        {
+            // Проверка длины логина и первого символа
+            message = "Логин должен быть минимум из 6 символов и не должен начинаться с цифры.";
+            messageType = "danger";
+            return;
+        }
+
+        if (_regUser.Password.Length < 6 || !HasUpperCase(_regUser.Password) || !HasDigit(_regUser.Password) || !HasSpecialCharacter(_regUser.Password))
+        {
+            // Проверка длины пароля, наличия заглавной буквы, цифры и спец. символа
+            message = "Пароль должен быть минимум из 6 символов и содержать хотя бы 1 букву верхнего регистра, хотя бы 1 цифру и хотя бы 1 спец. символ.";
+            messageType = "danger";
+            return;
+        }
+
         // Добавляем зарегистрированного пользователя в список пользователей
         userList.Add(_regUser);
         // Выводим сообщение об успешной регистрации
         message = "Регистрация успешна!";
         messageType = "success";
-        // NavManager.NavigateTo("/chat?message=Welcome%20to%20the%20chat!");
     }
 
     class User
@@ -135,4 +150,40 @@
         public string Username { get; set; }
         public string Password { get; set; }
     }
+    private bool HasUpperCase(string str)
+    {
+        foreach (char c in str)
+        {
+            if (char.IsUpper(c))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool HasDigit(string str)
+    {
+        foreach (char c in str)
+        {
+            if (char.IsDigit(c))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool HasSpecialCharacter(string str)
+    {
+        foreach (char c in str)
+        {
+            if (!char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
