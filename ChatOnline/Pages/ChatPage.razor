@@ -3,27 +3,46 @@
 
 <div class="container mt-5">
     <div class="row">
-        <!-- Список сообщений -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body" style="height: 300px; overflow-y: scroll;">
-                    @foreach (var message in messages)
-                    {
-                        <div class="mb-3">
-                            <strong>@message.Sender:</strong> @message.Content
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-        <!-- Форма для ввода сообщения -->
+        <!-- Компонент для списка пользователей -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
+                    <h5 class="card-title">Select User</h5>
                     <div class="form-group">
-                        <textarea @bind="newMessage" class="form-control" rows="3" placeholder="Type your message..."></textarea>
+                        <input @bind="searchQuery" type="text" class="form-control" placeholder="Search users...">
                     </div>
-                    <button @onclick="SendMessage" class="btn btn-primary">Send</button>
+                    <ul class="list-group">
+                        @foreach (var user in filteredUsers)
+                        {
+                            <li @onclick="() => SelectUser(user)" class="list-group-item">@user.Username</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Компонент для отображения сообщений -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body" style="height: 300px; overflow-y: scroll;">
+                    @if (selectedUser != null)
+                    {
+                        <h5 class="card-title">Chat with @selectedUser.Username</h5>
+                        @foreach (var message in selectedUser.Messages)
+                        {
+                            <div class="mb-3">
+                                <strong>@message.Sender:</strong> @message.Content
+                            </div>
+                        }
+                        <!-- Форма для ввода сообщения -->
+                        <div class="form-group mt-3">
+                            <textarea @bind="newMessage" class="form-control" rows="3" placeholder="Type your message..."></textarea>
+                        </div>
+                        <button @onclick="SendMessage" class="btn btn-primary">Send</button>
+                    }
+                    else
+                    {
+                        <p>Please select a user to start chatting.</p>
+                    }
                 </div>
             </div>
         </div>
@@ -31,18 +50,53 @@
 </div>
 
 @code {
-    private List<Message> messages = new List<Message>();
+    private List<User> users = new List<User>
+    {
+        new User("Marsel"),
+        new User("Macsim"),
+        new User("Talgat Ramilevish"),
+        new User("Danil Dmitrievish"),
+        new User("Kirill"),
+        new User("Alina"),
+        new User("Samat")
+    };
+
+    private User selectedUser;
+    private string searchQuery = "";
     private string newMessage = "";
 
+    // Фильтрация пользователей по запросу поиска
+    private List<User> filteredUsers => string.IsNullOrEmpty(searchQuery) ? users : users.Where(u => u.Username.StartsWith(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    // Выбор пользователя
+    private void SelectUser(User user)
+    {
+        selectedUser = user;
+    }
+
+    // Отправка сообщения
     private void SendMessage()
     {
         if (!string.IsNullOrEmpty(newMessage))
         {
-            messages.Add(new Message { Sender = "You", Content = newMessage });
+            selectedUser.Messages.Add(new Message { Sender = "You", Content = newMessage });
             newMessage = "";
         }
     }
 
+    // Класс пользователя с сообщениями
+    public class User
+    {
+        public string Username { get; }
+        public List<Message> Messages { get; set; } = new List<Message>();
+
+        public User(string username)
+        {
+            Username = username;
+        }
+    }
+
+    // Класс сообщения
     public class Message
     {
         public string Sender { get; set; }
