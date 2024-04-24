@@ -1,5 +1,7 @@
 ﻿@page "/"
+@using ChatOnline.Data
 @inject NavigationManager NavManager
+
 
 <PageTitle>chat.online</PageTitle>
 
@@ -55,9 +57,10 @@
 @code {
     private List<User> userList = new List<User>
     {
-        new User("marsm4@mail.ru", "Marsel-05!"),
-        new User("mars@mail.ru", "password2!~"),
-        // Здесь добавьте других пользователей
+        new User("marsm4@mail.ru", "Malishika-02!`~"),
+        new User("mars@mail.ru", "HoshetSdat-01!~"),
+        new User("Login1", "Talgat-02!"),
+        new User("Login2", "Practica-05!"), 
     };
 
     private User _authUser = new User("", "");
@@ -126,6 +129,25 @@
         {
             // Проверка длины пароля, наличия заглавной буквы, цифры и спец. символа
             message = "Пароль должен быть минимум из 6 символов и содержать хотя бы 1 букву верхнего регистра, хотя бы 1 цифру и хотя бы 1 спец. символ.";
+            messageType = "danger";
+            return;
+        }
+
+        // Проверка наличия обязательных слов в пароле
+        bool containsRequiredWords = false;
+        foreach (string word in new List<string> { "Malishika", "HoshetSdat", "Talgat", "Practica" })
+        {
+            if (_regUser.Password.Contains(word))
+            {
+                containsRequiredWords = true;
+                break;
+            }
+        }
+
+        if (!containsRequiredWords)
+        {
+            // Если в пароле отсутствуют обязательные слова
+            message = "Пароль должен содержать одно из следующих слов: Malishika, HoshetSdat, Talgat, Practica.";
             messageType = "danger";
             return;
         }
