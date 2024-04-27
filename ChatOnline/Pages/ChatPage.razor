@@ -67,6 +67,15 @@
 
     // Фильтрация пользователей по запросу поиска
     private List<User> filteredUsers => string.IsNullOrEmpty(searchQuery) ? users : users.Where(u => u.Username.StartsWith(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+/*
+         * String.IsNullOrEmpty(String) Метод
+         * Указывает, действительно ли указанная строка является строкой null или пустой строкой ("").
+         */
+
+        /*
+        * StartsWith(String, StringComparison)
+        Определяет, совпадает ли начало этого экземпляра строки с заданной строкой при сравнении с учетом заданного параметра сравнения.
+        */
 
     // Выбор пользователя
     private void SelectUser(User user)
