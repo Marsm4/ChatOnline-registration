@@ -3,25 +3,8 @@
 
 <div class="container mt-5">
     <div class="row">
-        <!-- Компонент для списка пользователей -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Select User</h5>
-                    <div class="form-group">
-                        <input @bind="searchQuery" type="text" class="form-control" placeholder="Search users...">
-                    </div>
-                    <ul class="list-group">
-                        @foreach (var user in filteredUsers)
-                        {
-                            <li @onclick="() => SelectUser(user)" class="list-group-item">@user.Username</li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- Компонент для отображения сообщений -->
-        <div class="col-md-8">
+        <!-- Окно чата пользователя 1 -->
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-body" style="height: 300px; overflow-y: scroll;">
                     @if (selectedUser != null)
@@ -29,7 +12,7 @@
                         <h5 class="card-title">Chat with @selectedUser.Username</h5>
                         @foreach (var message in selectedUser.Messages)
                         {
-                            <div class="mb-3">
+                            <div class="mb-3 text-right">
                                 <strong>@message.Sender:</strong> @message.Content
                             </div>
                         }
@@ -45,6 +28,56 @@
                     }
                 </div>
             </div>
+        </div>
+        <!-- Окно чата пользователя 2 -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body" style="height: 300px; overflow-y: scroll;">
+                    @if (selectedUser2 != null)
+                    {
+                        <h5 class="card-title">Chat with @selectedUser2.Username</h5>
+                        @foreach (var message in selectedUser2.Messages)
+                        {
+                            <div class="mb-3 text-left">
+                                <strong>@message.Sender:</strong> @message.Content
+                            </div>
+                        }
+                        <!-- Форма для ввода сообщения -->
+                        <div class="form-group mt-3">
+                            <textarea @bind="newMessage2" class="form-control" rows="3" placeholder="Type your message..."></textarea>
+                        </div>
+                        <button @onclick="SendMessage2" class="btn btn-primary">Send</button>
+                    }
+                    else
+                    {
+                        <p>Please select a user to start chatting.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Список пользователей -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h5>Select User</h5>
+            <ul class="list-group">
+                @foreach (var user in filteredUsers)
+                {
+                    <li @onclick="() => SelectUser(user)" class="list-group-item">@user.Username</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <!-- Форма для выбора второго пользователя -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h5>Select Second User</h5>
+            <ul class="list-group">
+                @foreach (var user in filteredUsers.Where(u => u != selectedUser))
+                {
+                    <li @onclick="() => SelectUser2(user)" class="list-group-item">@user.Username</li>
+                }
+            </ul>
         </div>
     </div>
 </div>
@@ -62,34 +95,43 @@
     };
 
     private User selectedUser;
+    private User selectedUser2;
     private string searchQuery = "";
     private string newMessage = "";
+    private string newMessage2 = "";
 
     // Фильтрация пользователей по запросу поиска
     private List<User> filteredUsers => string.IsNullOrEmpty(searchQuery) ? users : users.Where(u => u.Username.StartsWith(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
-/*
-         * String.IsNullOrEmpty(String) Метод
-         * Указывает, действительно ли указанная строка является строкой null или пустой строкой ("").
-         */
 
-        /*
-        * StartsWith(String, StringComparison)
-        Определяет, совпадает ли начало этого экземпляра строки с заданной строкой при сравнении с учетом заданного параметра сравнения.
-        */
-
-    // Выбор пользователя
+    // Выбор пользователя 1
     private void SelectUser(User user)
     {
         selectedUser = user;
     }
 
-    // Отправка сообщения
+    // Выбор пользователя 2
+    private void SelectUser2(User user)
+    {
+        selectedUser2 = user;
+    }
+
+    // Отправка сообщения пользователю 1
     private void SendMessage()
     {
         if (!string.IsNullOrEmpty(newMessage))
         {
             selectedUser.Messages.Add(new Message { Sender = "You", Content = newMessage });
             newMessage = "";
+        }
+    }
+
+    // Отправка сообщения пользователю 2
+    private void SendMessage2()
+    {
+        if (!string.IsNullOrEmpty(newMessage2))
+        {
+            selectedUser2.Messages.Add(new Message { Sender = "You", Content = newMessage2 });
+            newMessage2 = "";
         }
     }
 
