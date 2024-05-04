@@ -2,6 +2,13 @@
 <h3>ChatPage</h3>
 
 <div class="container mt-5">
+    <!-- Поисковая строка -->
+@*    <div class="row mt-3">
+        <div class="col-md-12">
+            <input @bind="searchQuery" class="form-control" placeholder="Search users...">
+        </div>
+    </div>*@
+
     <div class="row">
         <!-- Окно чата пользователя 1 -->
         <div class="col-md-6">
@@ -58,8 +65,9 @@
     </div>
     <!-- Список пользователей -->
     <div class="row mt-5">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <h5>Select User</h5>
+            <input @bind="searchQuery" class="form-control mb-3" placeholder="Search users...">
             <ul class="list-group">
                 @foreach (var user in filteredUsers)
                 {
@@ -67,13 +75,11 @@
                 }
             </ul>
         </div>
-    </div>
-    <!-- Форма для выбора второго пользователя -->
-    <div class="row mt-5">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <h5>Select Second User</h5>
+            <input @bind="searchQuery2" class="form-control mb-3" placeholder="Search users...">
             <ul class="list-group">
-                @foreach (var user in filteredUsers.Where(u => u != selectedUser))
+                @foreach (var user in filteredUsers2)
                 {
                     <li @onclick="() => SelectUser2(user)" class="list-group-item">@user.Username</li>
                 }
@@ -97,11 +103,15 @@
     private User selectedUser;
     private User selectedUser2;
     private string searchQuery = "";
+    private string searchQuery2 = "";
     private string newMessage = "";
     private string newMessage2 = "";
 
-    // Фильтрация пользователей по запросу поиска
+    // Фильтрация пользователей для первого списка
     private List<User> filteredUsers => string.IsNullOrEmpty(searchQuery) ? users : users.Where(u => u.Username.StartsWith(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    // Фильтрация пользователей для второго списка
+    private List<User> filteredUsers2 => string.IsNullOrEmpty(searchQuery2) ? users : users.Where(u => u.Username.StartsWith(searchQuery2, StringComparison.OrdinalIgnoreCase)).ToList();
 
     // Выбор пользователя 1
     private void SelectUser(User user)
